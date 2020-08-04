@@ -18,7 +18,7 @@
     <maven.compiler.source>1.8</maven.compiler.source>
     <maven.compiler.target>1.8</maven.compiler.target>
     <junit-version>4.11</junit-version>
-    <mysql-version>5.1.6</mysql-version>
+    <mysql-version>8.0.16</mysql-version>
     <thymeleaf-version>3.0.11.RELEASE</thymeleaf-version>
     <servlet-version>3.0.1</servlet-version>
     <dbutils-version>1.7</dbutils-version>
