@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="zh-CN" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>BookStore</title>
+    <link th:href="@{/css/bootstrap.min.css}" rel="stylesheet">
+</head>
+<style type="text/css">
+    .modify {
+        margin-right: 5px;
+    }
+</style>
+<body>
+
+    <div class="container-fluid">
+        <div class="row" style="padding: 5px;border-bottom: 1px solid;">
+            <a href="#" class="btn btn-primary" style="margin-right: 15px;" data-toggle="modal"
+               data-target="#add-user">添加用户</a>
+            <form class="form-inline" style="display: inline;">
+                <div class="form-group">
+                    <input type="text" class="form-control">
+                </div>
+                <button type="submit" class="btn btn-default">搜索用户</button>
+            </form>
+        </div>
+        <div class="row">
+            <table class="table table-hover">
+                <thead>
+                <th><input type="checkbox" value="true"></th>
+                <th>id</th>
+                <th>用户名</th>
+                <th>密码</th>
+                <th>邮箱</th>
+                <th>创建时间</th>
+                <th>操作</th>
+                </thead>
+                <tbody>
+                    <tr th:if="${page != null}" th:each="user : ${page.data}" th:attr="data-id=${user.id}">
+                        <td><input type="checkbox"></td>
+                        <td th:text="${user.id}"></td>
+                        <td th:text="${user.username}"></td>
+                        <td th:text="${user.password}"></td>
+                        <td th:text="${user.email}"></td>
+                        <td th:text="${user.createTime}"></td>
+                        <td>
+                            <button class="btn btn-primary btn-sm modify"
+                                    th:attr="data-id=${user.id},data-username=${user.username}"
+                                    data-toggle="modal" data-target="#modify-user">修改</button>
+                            <button class="btn btn-danger btn-sm deleteUserBtn" th:attr="data-id=${user.id}">删除</button>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        <div class="row" th:if="${page.total > 0}">
+            <nav aria-label="Page navigation">
+                <ul class="pagination">
+                    <li th:classappend="${page.curr != 1 ? '' : 'disabled'}" th:title="${page.curr != 1 ? '上一页' : '已经到达第一页'}">
+                        <a th:href="@{'/user?index='+${page.curr - 1 < 1 ? 1 : page.curr - 1}}" aria-label="Previous">
+                            <span aria-hidden="true">&laquo;</span>
+                        </a>
+                    </li>
+                    <li th:each="index : ${#numbers.sequence(page.start, page.end)}" th:classappend="${index == page.curr ? 'active' : ''}">
+                        <a th:href="@{'/user?index='+${index}}" th:text="${index}"></a>
+                    </li>
+                    <li th:classappend="${page.curr != page.total ? '' : 'disabled'}" th:title="${page.curr != page.total ? '下一页' : '已经到达最后一页'}">
+                        <a th:href="@{'/user?index=' + ${page.curr + 1 > page.total ? page.total : page.curr + 1}}" aria-label="Next">
+                            <span aria-hidden="true">&raquo;</span>
+                        </a>
+                    </li>
+                </ul>
+            </nav>
+        </div>
+    </div>
+
+    <!-- 添加用户 -->
+    <div class="modal fade" id="add-user" tabindex="-1" role="dialog" aria-labelledby="add-user-title">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span>
+                    </button>
+                    <h4 class="modal-title" id="add-user-title">添加用户</h4>
+                </div>
+                <div class="modal-body">
+                    <div class="form-horizontal">
+                        <div class="form-group">
+                            <label for="add-user-username" class="col-sm-2 control-label">用户名</label>
+                            <div class="col-sm-10">
+                                <input type="text" class="form-control" id="add-user-username" title="用户名一经确认不可修改"
+                                       placeholder="请输入用户名">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="add-user-email" class="col-sm-2 control-label">邮箱</label>
+                            <div class="col-sm-10">
+                                <input type="email" class="form-control" id="add-user-email" placeholder="请输入邮箱">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="add-user-password" class="col-sm-2 control-label">密码</label>
+                            <div class="col-sm-10">
+                                <input type="password" class="form-control" id="add-user-password" placeholder="请输入密码">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <div class="col-sm-offset-2 col-sm-10">
+                                <button id="add-user-btn" type="submit" class="btn btn-default">添加</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!--修改用户-->
+    <div class="modal fade" id="modify-user" tabindex="-1" role="dialog" aria-labelledby="modify-user-title">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span>
+                    </button>
+                    <h4 class="modal-title" id="modify-user-title">修改用户资料</h4>
+                </div>
+                <div class="modal-body">
+                    <div class="form-horizontal">
+                        <div class="form-group">
+                            <label for="modify-user-user-id" class="col-sm-2 control-label">用户id</label>
+                            <div class="col-sm-10">
+                                <input type="email" disabled class="form-control" id="modify-user-user-id" title="用户id不可修改">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="modify-user-username" class="col-sm-2 control-label">用户名</label>
+                            <div class="col-sm-10">
+                                <input type="email" disabled class="form-control" id="modify-user-username" title="用户名不可修改">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="modify-user-email" class="col-sm-2 control-label">邮箱</label>
+                            <div class="col-sm-10">
+                                <input type="email" class="form-control" id="modify-user-email" placeholder="请输入邮箱">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="modify-user-password" class="col-sm-2 control-label">密码</label>
+                            <div class="col-sm-10">
+                                <input type="password" class="form-control" id="modify-user-password" placeholder="请输入密码">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <div class="col-sm-offset-2 col-sm-10">
+                                <button id="modify-user-btn" type="submit" class="btn btn-default">修改</button>
+                            </div>
+                        </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- jQuery (Bootstrap 的所有 JavaScript 插件都依赖 jQuery，所以必须放在前边) -->
+    <script th:src="@{/js/jquery.js}"></script>
+    <!-- 加载 Bootstrap 的所有 JavaScript 插件。你也可以根据需要只加载单个插件。 -->
+    <script th:src="@{/js/bootstrap.min.js}"></script>
+    <script th:src="@{js/user.js}"></script>
+</body>
+</html>
