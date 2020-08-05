@@ -1,8 +1,6 @@
 package com.bookstore.web;
 
-
 import javax.servlet.*;
-
 import javax.servlet.annotation.WebFilter;
 import javax.servlet.annotation.WebInitParam;
 import javax.servlet.http.HttpServletRequest;
@@ -24,10 +22,8 @@ public class EncodeFilter implements Filter {
 
     @Override
     public void init(FilterConfig filterConfig) throws ServletException {
-
         oldEncode = filterConfig.getInitParameter("oldEncode");
         newEncode = filterConfig.getInitParameter("newEncode");
-
     }
 
     @Override
@@ -43,9 +39,9 @@ public class EncodeFilter implements Filter {
     }
 
     @Override
-    public void destroy() {
+    public void destroy() {}
 
-    }
+    /*---辅助函数---*/
 
     /**
      * 转换编码方式
@@ -59,6 +55,8 @@ public class EncodeFilter implements Filter {
         return new String(old.getBytes(oldEncode), newEncode);
     }
 
+    /*---辅助类---*/
+
     /**
      * 封装后的HttpServletRequest
      * 解决获取的参数乱码问题
@@ -66,7 +64,6 @@ public class EncodeFilter implements Filter {
     private static class EncodeRequest implements InvocationHandler {
 
         private HttpServletRequest req;
-
 
         public EncodeRequest(HttpServletRequest req) {
             this.req = req;
@@ -83,7 +80,7 @@ public class EncodeFilter implements Filter {
                     Enumeration<String> oldValue = (Enumeration<String>) method.invoke(req, args);
                     List<String> newValue = new ArrayList<>();
                     while (oldValue.hasMoreElements()) {
-                       newValue.add(oldValue.nextElement());
+                        newValue.add(oldValue.nextElement());
                     }
                     return Collections.enumeration(newValue);
                 }

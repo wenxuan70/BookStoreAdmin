@@ -1,5 +1,6 @@
 package com.bookstore.web;
 
+import com.alibaba.fastjson.JSON;
 import com.bookstore.util.ThymeleafUtils;
 import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.context.WebContext;
@@ -26,18 +27,21 @@ public abstract class BasicController extends HttpServlet {
     }
 
     /**
-     * 如果子类需要初始化
+     * 子类初始化
      * @param config
      */
-    protected abstract void initServlet(ServletConfig config);
+    protected void initServlet(ServletConfig config) {}
 
-    @Override
-    protected abstract void doGet(HttpServletRequest req, HttpServletResponse resp)
-            throws ServletException, IOException;
-
-    @Override
-    protected abstract void doPost(HttpServletRequest req, HttpServletResponse resp)
-            throws ServletException, IOException;
+    /**
+     * 响应json数据
+     * @param resp
+     * @param o
+     * @throws IOException
+     */
+    public void writeJson(HttpServletResponse resp, Object o) throws IOException {
+        resp.setContentType("application/json");
+        JSON.writeJSONString(resp.getWriter(), o);
+    }
 
     /**
      * 渲染模板

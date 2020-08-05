@@ -1,5 +1,6 @@
 package com.bookstore.config;
 
+import com.alibaba.fastjson.JSON;
 import com.bookstore.util.ThymeleafUtils;
 import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.templatemode.TemplateMode;
@@ -9,6 +10,7 @@ import org.thymeleaf.templateresolver.ServletContextTemplateResolver;
 import javax.servlet.ServletContext;
 import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
+import java.util.Collections;
 
 /**
  * 用来加载Thymeleaf模板引擎和数据库配置
@@ -26,7 +28,7 @@ public class WebConfig implements ServletContextListener {
 
         // 加载数据库配置
         try {
-            Class.forName("com.bookstore.util.DataSourceUtils");
+            Class.forName("com.bookstore.util.JDBCUtils");
         } catch (ClassNotFoundException e) {
             e.printStackTrace();
         }

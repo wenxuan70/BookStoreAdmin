@@ -17,12 +17,12 @@
         <div class="row" style="padding: 5px;border-bottom: 1px solid;">
             <a href="#" class="btn btn-primary" style="margin-right: 15px;" data-toggle="modal"
                data-target="#add-user">添加用户</a>
-            <form class="form-inline" style="display: inline;">
+            <div class="form-inline" style="display: inline;">
                 <div class="form-group">
-                    <input type="text" class="form-control">
+                    <input id="search-user-username" type="text" class="form-control" placeholder="请输入要搜索的用户名" required="">
                 </div>
-                <button type="submit" class="btn btn-default">搜索用户</button>
-            </form>
+                <button id="search-user-btn" type="submit" class="btn btn-default">搜索用户</button>
+            </div>
         </div>
         <div class="row">
             <table class="table table-hover">
@@ -45,7 +45,7 @@
                         <td th:text="${user.createTime}"></td>
                         <td>
                             <button class="btn btn-primary btn-sm modify"
-                                    th:attr="data-id=${user.id},data-username=${user.username}"
+                                    th:attr="data-id=${user.id},data-username=${user.username},data-email=${user.email},data-password=${user.password}"
                                     data-toggle="modal" data-target="#modify-user">修改</button>
                             <button class="btn btn-danger btn-sm deleteUserBtn" th:attr="data-id=${user.id}">删除</button>
                         </td>
@@ -57,15 +57,15 @@
             <nav aria-label="Page navigation">
                 <ul class="pagination">
                     <li th:classappend="${page.curr != 1 ? '' : 'disabled'}" th:title="${page.curr != 1 ? '上一页' : '已经到达第一页'}">
-                        <a th:href="@{'/user?index='+${page.curr - 1 < 1 ? 1 : page.curr - 1}}" aria-label="Previous">
+                        <a th:href="@{'/user?index='+${page.curr - 1 < 1 ? 1 : page.curr - 1}+${q!=null?('&q='+q):''}}" aria-label="Previous">
                             <span aria-hidden="true">&laquo;</span>
                         </a>
                     </li>
                     <li th:each="index : ${#numbers.sequence(page.start, page.end)}" th:classappend="${index == page.curr ? 'active' : ''}">
-                        <a th:href="@{'/user?index='+${index}}" th:text="${index}"></a>
+                        <a th:href="@{'/user?index='+${index}+${q!=null?('&q='+q):''}}" th:text="${index}"></a>
                     </li>
                     <li th:classappend="${page.curr != page.total ? '' : 'disabled'}" th:title="${page.curr != page.total ? '下一页' : '已经到达最后一页'}">
-                        <a th:href="@{'/user?index=' + ${page.curr + 1 > page.total ? page.total : page.curr + 1}}" aria-label="Next">
+                        <a th:href="@{'/user?index=' + ${page.curr + 1 > page.total ? page.total : page.curr + 1}+${q!=null?('&q='+q):''}}" aria-label="Next">
                             <span aria-hidden="true">&raquo;</span>
                         </a>
                     </li>
@@ -89,19 +89,19 @@
                             <label for="add-user-username" class="col-sm-2 control-label">用户名</label>
                             <div class="col-sm-10">
                                 <input type="text" class="form-control" id="add-user-username" title="用户名一经确认不可修改"
-                                       placeholder="请输入用户名">
+                                       placeholder="请输入用户名" required="" autofocus="">
                             </div>
                         </div>
                         <div class="form-group">
                             <label for="add-user-email" class="col-sm-2 control-label">邮箱</label>
                             <div class="col-sm-10">
-                                <input type="email" class="form-control" id="add-user-email" placeholder="请输入邮箱">
+                                <input type="email" class="form-control" id="add-user-email" placeholder="请输入邮箱" required="">
                             </div>
                         </div>
                         <div class="form-group">
                             <label for="add-user-password" class="col-sm-2 control-label">密码</label>
                             <div class="col-sm-10">
-                                <input type="password" class="form-control" id="add-user-password" placeholder="请输入密码">
+                                <input type="password" class="form-control" id="add-user-password" placeholder="请输入密码" required="">
                             </div>
                         </div>
                         <div class="form-group">
@@ -141,7 +141,7 @@
                         <div class="form-group">
                             <label for="modify-user-email" class="col-sm-2 control-label">邮箱</label>
                             <div class="col-sm-10">
-                                <input type="email" class="form-control" id="modify-user-email" placeholder="请输入邮箱">
+                                <input type="email" class="form-control" id="modify-user-email" placeholder="请输入邮箱" autofocus="">
                             </div>
                         </div>
                         <div class="form-group">
@@ -155,17 +155,15 @@
                                 <button id="modify-user-btn" type="submit" class="btn btn-default">修改</button>
                             </div>
                         </div>
-                        </form>
-                    </div>
+                        </div>
+                    </form>
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- jQuery (Bootstrap 的所有 JavaScript 插件都依赖 jQuery，所以必须放在前边) -->
-    <script th:src="@{/js/jquery.js}"></script>
-    <!-- 加载 Bootstrap 的所有 JavaScript 插件。你也可以根据需要只加载单个插件。 -->
-    <script th:src="@{/js/bootstrap.min.js}"></script>
-    <script th:src="@{js/user.js}"></script>
+<script th:src="@{/js/jquery.js}"></script>
+<script th:src="@{/js/bootstrap.min.js}"></script>
+<script th:src="@{js/user.js}"></script>
 </body>
 </html>

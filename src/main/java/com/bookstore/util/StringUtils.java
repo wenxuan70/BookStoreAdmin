@@ -11,6 +11,6 @@ public class StringUtils {
     }
 
     public static boolean notEmpty(String s) {
-        return !isEmpty(s);
+        return s != null && s.length() > 0;
     }
 }
