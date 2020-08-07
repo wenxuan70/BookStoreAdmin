@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="zh-CN" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>BookStore</title>
+    <link th:href="@{/css/bootstrap.min.css}" rel="stylesheet">
+    <style>
+        .modify {
+            margin-right: 5px;
+        }
+        .desc-limit {
+            max-width: 200px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap; //文本不换行，这样超出一行的部分被截取，显示...
+        }
+    </style>
+</head>
+<body>
+
+<div class="container-fluid">
+    <div class="row" style="padding: 5px;border-bottom: 1px solid;">
+        <a href="#" class="btn btn-primary" style="margin-right: 15px;" data-toggle="modal"
+           data-target="#add-book">添加书籍</a>
+        <div class="form-inline" style="display: inline;">
+            <div class="form-group">
+                <input id="search-book-title" type="text" class="form-control" placeholder="请输入要搜索的书籍名称" required="">
+            </div>
+            <button id="search-book-btn" type="submit" class="btn btn-default">搜索书籍</button>
+        </div>
+    </div>
+    <div class="row">
+        <table class="table table-bordered table-hover">
+            <thead>
+                <th><input type="checkbox"></th>
+                <th>id</th>
+                <th>书籍名称</th>
+                <th style="width: 200px;">描述</th>
+                <th>作者</th>
+                <th>出版社</th>
+                <th>出版日期</th>
+                <th>价格(元)</th>
+                <th>分类</th>
+                <th>操作</th>
+            </thead>
+            <tbody>
+                <tr th:if="${page!=null}" th:each="book : ${page.data}" th:attr="data-id=${book.id}">
+                    <td><input type="checkbox"></td>
+                    <td th:text="${book.id}"></td>
+                    <td th:text="${book.title}"></td>
+                    <td class="desc-limit" th:text="${book.desc}"></td>
+                    <td th:text="${book.author}"></td>
+                    <td th:text="${book.publisher}"></td>
+                    <td th:text="${book.publishDate}"></td>
+                    <td th:text="${book.price}"></td>
+                    <td th:text="${book.sort}"></td>
+                    <td>
+                        <button class="btn btn-primary btn-sm modify"
+                                th:attr="data-id=${book.id}"
+                                data-toggle="modal" data-target="#modify-book">修改</button>
+                        <button class="btn btn-danger btn-sm deleteBook" th:attr="data-id=${book.id}">删除</button>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+    <div class="row" th:if="${page.total > 0}">
+        <nav aria-label="Page navigation">
+            <ul class="pagination">
+                <li th:classappend="${page.curr != 1 ? '' : 'disabled'}" th:title="${page.curr != 1 ? '上一页' : '已经到达第一页'}">
+                    <a th:href="@{'/book?index='+${page.curr - 1 < 1 ? 1 : page.curr - 1}+${q!=null?('&q='+q):''}}" aria-label="Previous">
+                        <span aria-hidden="true">&laquo;</span>
+                    </a>
+                </li>
+                <li th:each="index : ${#numbers.sequence(page.start, page.end)}" th:classappend="${index == page.curr ? 'active' : ''}">
+                    <a th:href="@{'/book?index='+${index}+${q!=null?('&q='+q):''}}" th:text="${index}"></a>
+                </li>
+                <li th:classappend="${page.curr != page.total ? '' : 'disabled'}" th:title="${page.curr != page.total ? '下一页' : '已经到达最后一页'}">
+                    <a th:href="@{'/book?index=' + ${page.curr + 1 > page.total ? page.total : page.curr + 1}+${q!=null?('&q='+q):''}}" aria-label="Next">
+                        <span aria-hidden="true">&raquo;</span>
+                    </a>
+                </li>
+            </ul>
+        </nav>
+    </div>
+</div>
+
+<script th:src="@{/js/jquery.js}"></script>
+<script th:src="@{/js/bootstrap.min.js}"></script>
+<script>
+    const url = 'http://localhost:8081/book';
+    $('#search-book-btn').click(function () {
+        let title = $('#search-book-title').val();
+        if (!/([\u4E00-\u9FA5]|\w)+/.test(title)) {
+            alert('搜索内容不能为空');
+        } else {
+            let query = '?q=' + title;
+            $(location).attr('href',url + query);
+        }
+    });
+</script>
+</body>
+</html>

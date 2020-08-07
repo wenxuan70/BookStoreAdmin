@@ -11,13 +11,8 @@ public class HomeController extends BasicController {
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        if (req.getSession().getAttribute("user") != null) {
-            // 已登录, 跳转到index页面
-            renderTemplate(req, resp, "index");
-            return;
-        }
-        // 跳转到login页面
-        renderTemplate(req, resp, "login");
+        // 跳转到index页面
+        renderTemplate(req, resp, "index");
     }
 
 }

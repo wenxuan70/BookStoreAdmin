@@ -2,6 +2,8 @@ package com.bookstore.config;
 
 import com.alibaba.fastjson.JSON;
 import com.bookstore.util.ThymeleafUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.templatemode.TemplateMode;
 import org.thymeleaf.templateresolver.ITemplateResolver;
@@ -10,7 +12,6 @@ import org.thymeleaf.templateresolver.ServletContextTemplateResolver;
 import javax.servlet.ServletContext;
 import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
-import java.util.Collections;
 
 /**
  * 用来加载Thymeleaf模板引擎和数据库配置
@@ -24,7 +25,6 @@ public class WebConfig implements ServletContextListener {
         // 把模板引擎加入ServletContext
         TemplateEngine engine = templateEngine(context);
         ThymeleafUtils.setTemplateEngine(context, engine);
-        System.out.format("加载模板引擎配置...\n");
 
         // 加载数据库配置
         try {
@@ -32,7 +32,6 @@ public class WebConfig implements ServletContextListener {
         } catch (ClassNotFoundException e) {
             e.printStackTrace();
         }
-        System.out.format("加载数据库配置...\n");
     }
 
     @Override
@@ -57,7 +56,7 @@ public class WebConfig implements ServletContextListener {
      * @return
      */
     private ITemplateResolver templateResolver(final ServletContext context) {
-        ServletContextTemplateResolver templateResolver =
+            ServletContextTemplateResolver templateResolver =
                 new ServletContextTemplateResolver(context);
 
         templateResolver.setTemplateMode(TemplateMode.HTML);

@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="zh-CN" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>BookStore</title>
+    <link th:href="@{/css/bootstrap.min.css}" rel="stylesheet">
+    <link th:href="@{/css/index.css}" rel="stylesheet">
+</head>
+<body>
+<div class="container">
+    <form th:action="@{/info}" method="post">
+        <div class="form-group">
+            <label for="info-user-id">用户id</label>
+            <input type="text" th:value="${user.id}" class="form-control" id="info-user-id" title="用户id" disabled>
+        </div>
+        <div class="form-group">
+            <label for="info-username">用户名</label>
+            <input type="text" th:value="${user.username}" class="form-control" id="info-username" title="用户名" disabled>
+        </div>
+        <div class="form-group">
+            <label for="info-create-time">创建日期</label>
+            <input type="date" th:value="${user.createTime}" class="form-control" id="info-create-time"
+                   title="创建日期" disabled>
+        </div>
+        <div class="form-group">
+            <label for="info-password">密码(已加密)</label>
+            <input type="text" th:value="${user.password}" class="form-control" id="info-password"
+                   title="加密后的密码" disabled>
+        </div>
+        <div class="form-group">
+            <label for="info-email">邮箱</label>
+            <input type="email" th:value="${user.email}" class="form-control" id="info-email" title="邮箱" disabled>
+        </div>
+        <button id="modify-info-password" type="submit" class="btn btn-default">修改密码</button>
+        <button id="modify-info-email" type="submit" class="btn btn-default">修改邮箱</button>
+    </form>
+</div>
+
+<script th:src="@{/js/jquery.js}"></script>
+<script th:src="@{/js/bootstrap.min.js}"></script>
+</body>
+</html>

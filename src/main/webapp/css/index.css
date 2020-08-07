@@ -1,0 +1,30 @@
+.side-fix {
+    position: fixed;
+    top: 51px;
+    bottom: 0;
+    left: 0;
+    z-index: 1000;
+    display: block;
+    padding: 20px;
+    overflow-x: hidden;
+    overflow-y: auto;
+    background-color: #f5f5f5;
+    border-right: 1px solid #eee;
+}
+.nav-side {
+    margin-right: -21px;
+    margin-bottom: 20px;
+    margin-left: -20px;
+}
+.nav-side > .active > a,
+.nav-side > .active > a:hover,
+.nav-side > .active > a:focus {
+    color: #fff;
+    background-color: #428bca;
+}
+.main {
+    position: fixed;
+    top: 51px;
+    padding: 20px;
+    height: 100%;
+}

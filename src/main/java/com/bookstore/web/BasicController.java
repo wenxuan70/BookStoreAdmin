@@ -1,6 +1,7 @@
 package com.bookstore.web;
 
 import com.alibaba.fastjson.JSON;
+import com.bookstore.domain.ResponseContent;
 import com.bookstore.util.ThymeleafUtils;
 import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.context.WebContext;
@@ -41,6 +42,30 @@ public abstract class BasicController extends HttpServlet {
     public void writeJson(HttpServletResponse resp, Object o) throws IOException {
         resp.setContentType("application/json");
         JSON.writeJSONString(resp.getWriter(), o);
+    }
+
+    /**
+     * 响应错误提示消息
+     * @param resp
+     * @param msg
+     * @throws IOException
+     */
+    public void writeErrorMsg(HttpServletResponse resp, String msg) throws IOException {
+        resp.setContentType("application/json");
+        ResponseContent rs = ResponseContent.isError(msg);
+        JSON.writeJSONString(resp.getWriter(), rs);
+    }
+
+    /**
+     * 响应成功提示消息
+     * @param resp
+     * @param msg
+     * @throws IOException
+     */
+    public void writeOkMsg(HttpServletResponse resp, String msg) throws IOException {
+        resp.setContentType("application/json");
+        ResponseContent rs = ResponseContent.isOk(msg);
+        JSON.writeJSONString(resp.getWriter(), rs);
     }
 
     /**

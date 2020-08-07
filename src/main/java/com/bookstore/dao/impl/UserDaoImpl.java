@@ -17,7 +17,7 @@ import java.util.List;
 
 public class UserDaoImpl implements UserDao {
 
-    private static UserDao userDao = new UserDaoImpl();
+    private static final UserDao userDao = new UserDaoImpl();
 
     private UserDaoImpl() {}
 
