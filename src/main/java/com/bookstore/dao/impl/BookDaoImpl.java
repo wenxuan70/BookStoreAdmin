@@ -36,7 +36,13 @@ public class BookDaoImpl implements BookDao {
 
     @Override
     public List<Book> findAllBook(int begin, int count) {
-        String sql = "select id, title, `desc`, author, publisher, publish_date, price, sort from book limit ?,?";
+        String sql = "SELECT b.id as id, b.title as title, b.`desc` as `desc`, b.author as author, " +
+                " b.publisher as publisher, b.publish_date as publish_date,b.price as price, " +
+                " b.sort as sort, i.url as url " +
+                " FROM " +
+                " book as b " +
+                " LEFT JOIN book_img AS i ON b.id = i.book_id " +
+                " LIMIT ?, ?";
         List<Book> books = Collections.emptyList();
         try {
             books = queryRunner.query(sql, new BookListHandler(), begin, count);
@@ -48,8 +54,14 @@ public class BookDaoImpl implements BookDao {
 
     @Override
     public List<Book> findAllBook(String query, int begin, int count) {
-        String sql = "select id, title, `desc`, author, publisher, publish_date, price, sort from book " +
-                "where title regexp ? limit ?,?";
+        String sql = "SELECT b.id as id, b.title as title, b.`desc` as `desc`, b.author as author, " +
+                " b.publisher as publisher, b.publish_date as publish_date,b.price as price, " +
+                " b.sort as sort, i.url as url " +
+                " FROM " +
+                " book as b " +
+                " LEFT JOIN book_img AS i ON b.id = i.book_id " +
+                " WHERE b.title REGEXP ? " +
+                " LIMIT ?, ?";
         List<Book> books = Collections.emptyList();
         try {
             books = queryRunner.query(sql, new BookListHandler(), query, begin, count);
@@ -107,6 +119,30 @@ public class BookDaoImpl implements BookDao {
         return total;
     }
 
+    @Override
+    public Book findBook(long id) {
+        String sql = "select id, title, `desc`, author, publisher, publish_date, price, sort, null as url from book where id = ?";
+        Book book = null;
+        try {
+            book = queryRunner.query(sql,new BookHandler(),id);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return book;
+    }
+
+    @Override
+    public String getUrl(long id) {
+        String sql = "select url from book_img where book_id = ?";
+        String url = null;
+        try {
+            url = queryRunner.query(sql,new ScalarHandler<>(),id);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return url;
+    }
+
     /*---更新书籍相关方法---*/
 
     @Override
@@ -154,12 +190,50 @@ public class BookDaoImpl implements BookDao {
 
     @Override
     public boolean updateBook(long id, String desc, BigDecimal price, String sort) {
-        String sql = "update user set `desc` = ?, price = ?, sort = ? where id = ?";
+        String sql = "update book set `desc` = ?, price = ?, sort = ? where id = ?";
         Connection conn = null;
         try {
             conn = JDBCUtils.getConnection();
             conn.setAutoCommit(false);
             int update = queryRunner.update(conn, sql, desc, price, sort, id);
+            conn.commit();
+            return update == 1;
+        } catch (SQLException e) {
+            e.printStackTrace();
+            JDBCUtils.rollBack(conn);
+        } finally {
+            JDBCUtils.releaseResource(conn);
+        }
+        return false;
+    }
+
+    @Override
+    public boolean uploadImage(long id, String url) {
+        String sql = "insert into book_img(url,book_id) value(?,?)";
+        Connection conn = null;
+        try {
+            conn = JDBCUtils.getConnection();
+            conn.setAutoCommit(false);
+            int insert = queryRunner.update(conn, sql, url, id);
+            conn.commit();
+            return insert == 1;
+        } catch (SQLException e) {
+            e.printStackTrace();
+            JDBCUtils.rollBack(conn);
+        } finally {
+            JDBCUtils.releaseResource(conn);
+        }
+        return false;
+    }
+
+    @Override
+    public boolean updateImage(long id, String url) {
+        String sql = "update book_img set url = ? where book_id = ?";
+        Connection conn = null;
+        try {
+            conn = JDBCUtils.getConnection();
+            conn.setAutoCommit(false);
+            int update = queryRunner.update(conn, sql, url, id);
             conn.commit();
             return update == 1;
         } catch (SQLException e) {
@@ -191,9 +265,33 @@ public class BookDaoImpl implements BookDao {
                 book.setPublishDate(rs.getDate("publish_date"));
                 book.setSort(rs.getString("sort"));
                 book.setPrice(rs.getBigDecimal("price"));
+                book.setUrl(rs.getString("url"));
                 books.add(book);
             }
             return books;
+        }
+    }
+
+    /**
+     * 书籍处理类
+     */
+    private static class BookHandler implements ResultSetHandler<Book> {
+
+        @Override
+        public Book handle(ResultSet rs) throws SQLException {
+            Book book = new Book();
+            if (rs.next()) {
+                book.setId(rs.getLong("id"));
+                book.setTitle(rs.getString("title"));
+                book.setDesc(rs.getString("desc"));
+                book.setAuthor(rs.getString("author"));
+                book.setPublisher(rs.getString("publisher"));
+                book.setPublishDate(rs.getDate("publish_date"));
+                book.setSort(rs.getString("sort"));
+                book.setPrice(rs.getBigDecimal("price"));
+                book.setUrl(rs.getString("url"));
+            }
+            return book;
         }
     }
 }

@@ -14,6 +14,8 @@ public class Book {
     // 出版社
     private String publisher;
     private String sort;
+    // 书籍封面
+    private String url;
 
     public Book() {
     }
@@ -93,6 +95,14 @@ public class Book {
         this.sort = sort;
     }
 
+    public String getUrl() {
+        return url;
+    }
+
+    public void setUrl(String url) {
+        this.url = url;
+    }
+
     @Override
     public String toString() {
         final StringBuilder sb = new StringBuilder("Book{");
@@ -104,6 +114,7 @@ public class Book {
         sb.append(", publishDate=").append(publishDate);
         sb.append(", publisher='").append(publisher).append('\'');
         sb.append(", sort='").append(sort).append('\'');
+        sb.append(", url='").append(url).append('\'');
         sb.append('}');
         return sb.toString();
     }

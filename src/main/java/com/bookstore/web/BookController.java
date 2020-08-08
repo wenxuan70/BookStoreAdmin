@@ -19,9 +19,9 @@ public class BookController extends BasicController {
 
     private static final Logger log = LoggerFactory.getLogger(BookController.class);
 
-    private static final String TITLE_VALIDATION = "^([\\u4E00-\\u9FA5]|\\w)+$";
+    private static final String TITLE_VALIDATION = "^([\\u4E00-\\u9FA5]|\\w){1,15}$";
     private static final String PRICE_VALIDATION = "^(([1-9][0-9]*)|0)(\\.[0-9]+)?$";
-    private static final String PUBLISH_DATE_VALIDATION = "^(19|20)[0-9]{2}-((0[1-9])|(1[0-2]))$";
+    private static final String PUBLISH_DATE_VALIDATION = "^(19|20)[0-9]{2}-((0[1-9])|(1[0-2]))-((0[1-9])|([1-2][0-9])|(3[0-2]))$";
 
     private BookService bookService = BookService.getInstance();
 
@@ -60,6 +60,7 @@ public class BookController extends BasicController {
 
     /**
      * 添加书籍
+     * 请求参数: title,desc,author,sort,price,publisher,publishDate
      * @param req
      * @param resp
      * @throws ServletException
@@ -74,6 +75,7 @@ public class BookController extends BasicController {
                 priceStr = req.getParameter("price"),
                 publisher = req.getParameter("publisher"),
                 publishDateStr = req.getParameter("publishDate");
+        log.info(title+","+desc+","+author+","+sort+","+priceStr+","+publisher+","+publishDateStr);
         // 验证
         boolean verification = verifyParameters(resp, title, desc,
                 author, publisher, publishDateStr, priceStr, sort);
@@ -84,7 +86,7 @@ public class BookController extends BasicController {
         boolean success = false;
         try {
             success = bookService.addBook(title, desc, author,
-                    publisher, publishDateStr + "-01",
+                    publisher, publishDateStr,
                     priceStr, sort);
         } catch (ParseException e) {
             log.info("日期解析失败",e);
@@ -98,6 +100,7 @@ public class BookController extends BasicController {
 
     /**
      * 修改书籍信息
+     * 请求参数: id,desc,sort,price
      * @param req
      * @param resp
      * @throws ServletException
@@ -105,12 +108,71 @@ public class BookController extends BasicController {
      */
     @Override
     protected void doPut(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-
+        String  idStr = req.getParameter("id"),
+                desc = req.getParameter("desc"),
+                sort = req.getParameter("sort"),
+                priceStr = req.getParameter("price");
+        if (StringUtils.isEmpty(idStr)) {
+            writeErrorMsg(resp, "书籍id不能为空");
+            return;
+        }
+        if (StringUtils.isEmpty(desc)) {
+            writeErrorMsg(resp, "描述不能为空");
+            return;
+        }
+        if (StringUtils.isEmpty(priceStr) || !priceStr.matches(PRICE_VALIDATION)) {
+            writeErrorMsg(resp, "价格格式不正确");
+            return;
+        }
+        if (StringUtils.isEmpty(sort) || !bookService.hasSort(sort)) {
+            writeErrorMsg(resp, "分类不存在");
+            return;
+        }
+        try {
+            long id = Long.parseLong(idStr);
+            if (!bookService.hasId(id)) {
+                writeErrorMsg(resp, "不存在该书籍");
+                return;
+            }
+            boolean updateSuccess = bookService.updateBook(id, desc, priceStr, sort);
+            if (updateSuccess)
+                writeOkMsg(resp, "修改成功");
+            else
+                writeOkMsg(resp, "修改失败");
+        } catch (NumberFormatException e) {
+            writeErrorMsg(resp, "id格式不正确");
+        }
     }
 
+    /**
+     * 删除书籍
+     * 请求参数: id
+     * @param req
+     * @param resp
+     * @throws ServletException
+     * @throws IOException
+     */
     @Override
     protected void doDelete(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        super.doDelete(req, resp);
+        String  idStr = req.getParameter("id");
+        if (StringUtils.isEmpty(idStr)) {
+            writeErrorMsg(resp, "书籍id不能为空");
+            return;
+        }
+        try {
+            long id = Long.parseLong(idStr);
+            if (!bookService.hasId(id)) {
+                writeErrorMsg(resp, "不存在该书籍");
+                return;
+            }
+            boolean deleteSuccess = bookService.deleteBook(id);
+            if (deleteSuccess)
+                writeOkMsg(resp, "删除成功");
+            else
+                writeOkMsg(resp, "删除失败");
+        } catch (NumberFormatException e) {
+            writeErrorMsg(resp, "id格式不正确");
+        }
     }
 
     /**
@@ -133,6 +195,7 @@ public class BookController extends BasicController {
                                      String publishDateStr, String priceStr, String sort)
             throws IOException {
         if (StringUtils.isEmpty(title) || !title.matches(TITLE_VALIDATION)) {
+            log.info(title);
             writeErrorMsg(resp, "书籍名称格式不正确");
             return false;
         }

@@ -21,6 +21,10 @@ public interface BookDao {
 
     Integer findSortId(String sort);
 
+    Book findBook(long id);
+
+    String getUrl(long id);
+
     /*---更新书籍相关方法---*/
 
     boolean addBook(Book book);
@@ -28,4 +32,8 @@ public interface BookDao {
     boolean deleteBook(long id);
 
     boolean updateBook(long id, String desc, BigDecimal price, String sort);
+
+    boolean uploadImage(long id, String url);
+
+    boolean updateImage(long id, String url);
 }

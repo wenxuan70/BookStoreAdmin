@@ -1,5 +1,8 @@
 package com.bookstore.web;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import javax.servlet.*;
 import javax.servlet.annotation.WebFilter;
 import javax.servlet.annotation.WebInitParam;
@@ -17,6 +20,8 @@ import java.util.*;
 })
 public class EncodeFilter implements Filter {
 
+    private static final Logger log = LoggerFactory.getLogger(EncodeFilter.class);
+
     private static String oldEncode;
     private static String newEncode;
 
@@ -28,14 +33,14 @@ public class EncodeFilter implements Filter {
 
     @Override
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
-        HttpServletRequest req = (HttpServletRequest) request;
+//        HttpServletRequest req = (HttpServletRequest) request;
         // 动态代理
-        HttpServletRequest encodeReq = (HttpServletRequest) Proxy.newProxyInstance(req.getClass().getClassLoader(),
-                new Class[]{HttpServletRequest.class},
-                new EncodeRequest(req));
+//        HttpServletRequest encodeReq = (HttpServletRequest) Proxy.newProxyInstance(req.getClass().getClassLoader(),
+//                new Class[]{HttpServletRequest.class},
+//                new EncodeRequest(req));
         // 设置响应数据的编码方式
         response.setCharacterEncoding(newEncode);
-        chain.doFilter(encodeReq, response);
+        chain.doFilter(request, response);
     }
 
     @Override

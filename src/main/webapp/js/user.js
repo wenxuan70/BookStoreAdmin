@@ -30,6 +30,7 @@ $('#add-user-btn').click(function () {
 			},
 			dataType: 'json',
 			success: function (e) {
+				alert(e.message);
 			},
 			error: function (e) {
 				alert('找不到服务器T_T');
@@ -80,7 +81,7 @@ $('#modify-user-btn').click(function () {
 			type: 'put',
 			datatype: 'json',
 			success: function (e) {
-				if (e.code === 'ok') {
+				if (e.code === 1) {
 					alert("修改成功");
 				} else {
 					alert("修改失败,请稍后重试");
@@ -119,7 +120,7 @@ $(document).ready(function () {
 				type: 'delete',
 				datatype: 'json',
 				success: function (e) {
-					if (e.code === 'ok') {
+					if (e.code === 1) {
 						alert('删除成功');
 						// 删除行
 						$('tr[data-id=\"'+ id + '\"]').remove();

@@ -73,6 +73,33 @@ public class BookService {
         return bookDao.findSortId(sort) != null;
     }
 
+    /**
+     * 判断是否有该书籍
+     * @param id
+     * @return
+     */
+    public boolean hasId(long id) {
+        return bookDao.findBook(id).getId() != null;
+    }
+
+    /**
+     * 判断书籍是否有封面
+     * @param id
+     * @return
+     */
+    public boolean hasImage(long id) {
+        return bookDao.getUrl(id) != null;
+    }
+
+    /**
+     * 获取书籍图片的url
+     * @param id
+     * @return
+     */
+    public String getUrl(long id) {
+        return bookDao.getUrl(id);
+    }
+
     /*---更新业务---*/
 
     /**
@@ -118,4 +145,23 @@ public class BookService {
         return bookDao.deleteBook(id);
     }
 
+    /**
+     * 保存书籍图片的url
+     * @param id
+     * @param url
+     * @return
+     */
+    public boolean uploadImage(long id, String url) {
+        return bookDao.uploadImage(id, url);
+    }
+
+    /**
+     * 更新书籍图片的url
+     * @param id
+     * @param url
+     * @return
+     */
+    public boolean updateImage(long id, String url) {
+        return bookDao.updateImage(id,url);
+    }
 }

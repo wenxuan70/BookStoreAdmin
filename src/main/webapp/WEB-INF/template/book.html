@@ -6,14 +6,29 @@
     <title>BookStore</title>
     <link th:href="@{/css/bootstrap.min.css}" rel="stylesheet">
     <style>
-        .modify {
+        .modifyBook {
             margin-right: 5px;
         }
+
         .desc-limit {
             max-width: 200px;
             overflow: hidden;
             text-overflow: ellipsis;
-            white-space: nowrap; //文本不换行，这样超出一行的部分被截取，显示...
+            white-space: nowrap;
+        }
+        .title-limit {
+            max-width: 100px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+        textarea {
+            resize: none;
+        }
+
+        .book-desc {
+            max-height: 100px;
+            min-height: 100px;
         }
     </style>
 </head>
@@ -33,51 +48,64 @@
     <div class="row">
         <table class="table table-bordered table-hover">
             <thead>
-                <th><input type="checkbox"></th>
-                <th>id</th>
-                <th>书籍名称</th>
-                <th style="width: 200px;">描述</th>
-                <th>作者</th>
-                <th>出版社</th>
-                <th>出版日期</th>
-                <th>价格(元)</th>
-                <th>分类</th>
-                <th>操作</th>
+            <th><input type="checkbox"></th>
+            <th>id</th>
+            <th style="width: 100px">书籍名称</th>
+            <th>书籍封面</th>
+            <th style="width: 200px;">描述</th>
+            <th>作者</th>
+            <th>出版社</th>
+            <th>出版日期</th>
+            <th>价格(元)</th>
+            <th>分类</th>
+            <th>操作</th>
             </thead>
             <tbody>
-                <tr th:if="${page!=null}" th:each="book : ${page.data}" th:attr="data-id=${book.id}">
-                    <td><input type="checkbox"></td>
-                    <td th:text="${book.id}"></td>
-                    <td th:text="${book.title}"></td>
-                    <td class="desc-limit" th:text="${book.desc}"></td>
-                    <td th:text="${book.author}"></td>
-                    <td th:text="${book.publisher}"></td>
-                    <td th:text="${book.publishDate}"></td>
-                    <td th:text="${book.price}"></td>
-                    <td th:text="${book.sort}"></td>
-                    <td>
-                        <button class="btn btn-primary btn-sm modify"
-                                th:attr="data-id=${book.id}"
-                                data-toggle="modal" data-target="#modify-book">修改</button>
-                        <button class="btn btn-danger btn-sm deleteBook" th:attr="data-id=${book.id}">删除</button>
-                    </td>
-                </tr>
+            <tr th:if="${page!=null}" th:each="book : ${page.data}" th:attr="data-id=${book.id}">
+                <td><input type="checkbox"></td>
+                <td th:text="${book.id}"></td>
+                <td class="title-limit" th:text="${book.title}"></td>
+                <td>
+                    <img width="140px" height="140px" th:src="@{${book.url!=null?book.url:'/image/bookImg.svg'}}" class="img-responsive img-rounded" alt="书籍封面">
+                </td>
+                <td class="desc-limit" th:text="${book.desc}"></td>
+                <td th:text="${book.author}"></td>
+                <td th:text="${book.publisher}"></td>
+                <td th:text="${book.publishDate}"></td>
+                <td th:text="${book.price}"></td>
+                <td th:text="${book.sort}"></td>
+                <td>
+                    <button class="btn btn-primary btn-sm modifyBook"
+                            th:attr="data-id=${book.id}"
+                            data-toggle="modal" data-target="#modify-book">修改
+                    </button>
+                    <button class="btn btn-info btn-sm uploadImage"
+                            th:text="${book.url!=null?'更新封面':'上传封面'}"
+                            th:attr="data-id=${book.id}"></button>
+                    <button class="btn btn-danger btn-sm deleteBook" th:attr="data-id=${book.id}">删除</button>
+                </td>
+            </tr>
             </tbody>
         </table>
     </div>
     <div class="row" th:if="${page.total > 0}">
         <nav aria-label="Page navigation">
             <ul class="pagination">
-                <li th:classappend="${page.curr != 1 ? '' : 'disabled'}" th:title="${page.curr != 1 ? '上一页' : '已经到达第一页'}">
-                    <a th:href="@{'/book?index='+${page.curr - 1 < 1 ? 1 : page.curr - 1}+${q!=null?('&q='+q):''}}" aria-label="Previous">
+                <li th:classappend="${page.curr != 1 ? '' : 'disabled'}"
+                    th:title="${page.curr != 1 ? '上一页' : '已经到达第一页'}">
+                    <a th:href="@{'/book?index='+${page.curr - 1 < 1 ? 1 : page.curr - 1}+${q!=null?('&q='+q):''}}"
+                       aria-label="Previous">
                         <span aria-hidden="true">&laquo;</span>
                     </a>
                 </li>
-                <li th:each="index : ${#numbers.sequence(page.start, page.end)}" th:classappend="${index == page.curr ? 'active' : ''}">
+                <li th:each="index : ${#numbers.sequence(page.start, page.end)}"
+                    th:classappend="${index == page.curr ? 'active' : ''}">
                     <a th:href="@{'/book?index='+${index}+${q!=null?('&q='+q):''}}" th:text="${index}"></a>
                 </li>
-                <li th:classappend="${page.curr != page.total ? '' : 'disabled'}" th:title="${page.curr != page.total ? '下一页' : '已经到达最后一页'}">
-                    <a th:href="@{'/book?index=' + ${page.curr + 1 > page.total ? page.total : page.curr + 1}+${q!=null?('&q='+q):''}}" aria-label="Next">
+                <li th:classappend="${page.curr != page.total ? '' : 'disabled'}"
+                    th:title="${page.curr != page.total ? '下一页' : '已经到达最后一页'}">
+                    <a th:href="@{'/book?index=' + ${page.curr + 1 > page.total ? page.total : page.curr + 1}+${q!=null?('&q='+q):''}}"
+                       aria-label="Next">
                         <span aria-hidden="true">&raquo;</span>
                     </a>
                 </li>
@@ -86,18 +114,323 @@
     </div>
 </div>
 
+<!--添加书籍-->
+<div class="modal fade" id="add-book" tabindex="-1" role="dialog" aria-labelledby="add-book-h">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span>
+                </button>
+                <h4 class="modal-title" id="add-book-h">添加书籍</h4>
+            </div>
+            <div class="modal-body">
+                <form>
+                    <div class="form-group">
+                        <label for="add-book-title">书籍名称</label>
+                        <input type="text" class="form-control" id="add-book-title" placeholder="请输入书籍名称" maxlength="15"
+                               required>
+                    </div>
+                    <div class="form-group">
+                        <label for="add-book-author">作者</label>
+                        <input type="text" class="form-control" id="add-book-author" placeholder="请输入作者名称" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="add-book-sort">分类</label>
+                        <select id="add-book-sort" class="form-control">
+                            <option selected disabled value="no">请选择</option>
+                            <option value="小说">小说</option>
+                            <option value="文学">文学</option>
+                            <option value="经济">经济</option>
+                            <option value="历史">历史</option>
+                            <option value="管理">管理</option>
+                            <option value="艺术">艺术</option>
+                            <option value="艺术">艺术</option>
+                            <option value="青春文学">青春文学</option>
+                            <option value="童书">童书</option>
+                            <option value="法律">法律</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="add-book-desc">描述</label>
+                        <textarea class="form-control book-desc" id="add-book-desc" placeholder="请输入书籍描述"
+                                  required></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label for="add-book-publisher">出版社</label>
+                        <input type="text" class="form-control" id="add-book-publisher" placeholder="请输入书籍出版社" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="add-book-publishDate">出版日期</label>
+                        <input type="date" class="form-control" id="add-book-publishDate" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="add-book-price">定价</label>
+                        <input type="number" class="form-control" id="add-book-price" placeholder="请输入书籍定价" min="1"
+                               required>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button id="add-book-btn" type="button" class="btn btn-primary">添加</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!--修改书籍信息-->
+<div class="modal fade" id="modify-book" tabindex="-1" role="dialog" aria-labelledby="modify-book-h">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span>
+                </button>
+                <h4 class="modal-title" id="modify-book-h">修改书籍信息</h4>
+            </div>
+            <div class="modal-body">
+                <form>
+                    <div class="form-group">
+                        <label for="modify-book-id">书籍id</label>
+                        <input type="text" class="form-control" id="modify-book-id" disabled>
+                    </div>
+                    <div class="form-group">
+                        <label for="modify-book-title">书籍名称</label>
+                        <input type="text" class="form-control" id="modify-book-title" disabled>
+                    </div>
+                    <div class="form-group">
+                        <label for="modify-book-author">作者</label>
+                        <input type="text" class="form-control" id="modify-book-author" disabled>
+                    </div>
+                    <div class="form-group">
+                        <label for="modify-book-publisher">出版社</label>
+                        <input type="text" class="form-control" id="modify-book-publisher" disabled>
+                    </div>
+                    <div class="form-group">
+                        <label for="modify-book-publishDate">出版日期</label>
+                        <input type="date" class="form-control" id="modify-book-publishDate" disabled>
+                    </div>
+                    <div class="form-group">
+                        <label for="modify-book-sort">分类</label>
+                        <select id="modify-book-sort" class="form-control">
+                            <option selected disabled>请选择</option>
+                            <option value="小说">小说</option>
+                            <option value="文学">文学</option>
+                            <option value="经济">经济</option>
+                            <option value="历史">历史</option>
+                            <option value="管理">管理</option>
+                            <option value="艺术">艺术</option>
+                            <option value="艺术">艺术</option>
+                            <option value="青春文学">青春文学</option>
+                            <option value="童书">童书</option>
+                            <option value="法律">法律</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="modify-book-desc">描述</label>
+                        <textarea class="form-control book-desc" id="modify-book-desc" placeholder="请输入书籍描述"
+                                  required></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label for="modify-book-price">定价</label>
+                        <input type="number" class="form-control" id="modify-book-price" placeholder="请输入书籍定价" min="1"
+                               required>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button id="modify-book-btn" type="submit" class="btn btn-primary">修改</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!--上传图片-->
+<div class="modal fade" id="upload-image" tabindex="-1" role="dialog" aria-labelledby="upload-image-h">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span>
+                </button>
+                <h4 class="modal-title" id="upload-image-h">上传书籍封面</h4>
+            </div>
+            <div class="modal-body">
+                <form method="post" enctype="multipart/form-data">
+                    <input id="book-id" hidden>
+                    <div class="form-group">
+                        <label for="image">图片</label>
+                        <input type="file" id="image">
+                        <p class="help-block">只允许上传 jpg, jpeg, svg, png格式,且大小不超过5MB的图片</p>
+                    </div>
+                    <button id="upload-image-btn" type="button" class="btn btn-primary">上传</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
 <script th:src="@{/js/jquery.js}"></script>
 <script th:src="@{/js/bootstrap.min.js}"></script>
 <script>
     const url = 'http://localhost:8081/book';
+    const DateRegexp = /^(19|20)[0-9]{2}-((0[1-9])|(1[0-2]))-((0[1-9])|([1-2][0-9])|(3[0-2]))$/;
     $('#search-book-btn').click(function () {
         let title = $('#search-book-title').val();
         if (!/([\u4E00-\u9FA5]|\w)+/.test(title)) {
             alert('搜索内容不能为空');
         } else {
             let query = '?q=' + title;
-            $(location).attr('href',url + query);
+            $(location).attr('href', url + query);
         }
+    });
+    // 添加书籍模态框关闭前
+    $('#add-book').on('hidden.bs.modal', function (e) {
+        $('#add-book-title').val('');
+        $('#add-book-desc').val('');
+        $('#add-book-author').val('');
+        $('#add-book-sort').val('no');
+        $('#add-book-price').val('');
+        $('#add-book-publishDate').val('');
+        $('#add-book-publisher').val('');
+    });
+    // 修改书籍前获取信息
+    $('#modify-book').on('show.bs.modal', function (e) {
+        let id = e.relatedTarget.dataset['id'];
+        let children = $('tr[data-id="' + id + '"]').children();
+        $('#modify-book-id').val($(children[1]).html());
+        $('#modify-book-title').val($(children[2]).html());
+        $('#modify-book-desc').val($(children[3]).html());
+        $('#modify-book-author').val($(children[4]).html());
+        $('#modify-book-publisher').val($(children[5]).html());
+        $('#modify-book-publishDate').val($(children[6]).html());
+        $('#modify-book-price').val($(children[7]).html());
+        $('#modify-book-sort').val($(children[8]).html());
+    });
+    // 添加书籍
+    $('#add-book-btn').click(function () {
+        let title = $('#add-book-title').val(),
+            desc = $('#add-book-desc').val(),
+            author = $('#add-book-author').val(),
+            sort = $('#add-book-sort').val(),
+            price = $('#add-book-price').val(),
+            publishDate = $('#add-book-publishDate').val(),
+            publisher = $('#add-book-publisher').val();
+        if (!/^([\u4E00-\u9FA5]|\w){1,15}$/.test(title)) {
+            alert('书籍名称格式必须为:中文,字母,数字和下划线组成,长度为1-15个字符');
+        } else if (author === null || author.length === 0) {
+            alert('作者不能为空');
+        } else if (sort === null || sort.length === 0 || sort === 'no') {
+            alert('分类不能为空');
+        } else if (desc === null || desc.length === 0) {
+            alert('描述不能为空');
+        } else if (publisher === null || publisher.length === 0) {
+            alert('出版社不能为空');
+        } else if (publishDate === null || publishDate.length === 0 || !DateRegexp.test(publishDate)) {
+            alert('出版日期格式不正确');
+        } else if (price === null || price.length === 0 || !/[1-9][0-9]*/.test(price)) {
+            alert('价格格式不正确');
+        } else {
+            $.ajax({
+                url: url,
+                type: 'post',
+                data: {
+                    title: title,
+                    author: author,
+                    sort: sort,
+                    desc: desc,
+                    publishDate: publishDate,
+                    publisher: publisher,
+                    price: price
+                },
+                datatype: 'json',
+                success: function (e) {
+                    alert(e.message);
+                    if (e.code === 1) {
+                        $('#add-book').modal('hide');
+                    }
+                },
+                error: function (e) {
+                    alert('找不到服务器T_T');
+                }
+            })
+        }
+    });
+    // 修改书籍
+    $('#modify-book-btn').click(function () {
+        let price = $('#modify-book-price').val(),
+            sort = $('#modify-book-sort').val(),
+            desc = $('#modify-book-desc').val(),
+            id = $('#modify-book-id').val();
+        if (sort === null || sort.length === 0 || sort === 'no') {
+            alert('分类不能为空');
+        } else if (desc === null || desc.length === 0) {
+            alert('描述不能为空');
+        } else if (price === null || price.length === 0 || !/[1-9][0-9]*/.test(price)) {
+            alert('价格格式不正确');
+        } else {
+            let data = '?id='+id+'&price='+price+'&sort='+sort+'&desc='+desc;
+            $.ajax({
+                url: url + data,
+                type: 'put',
+                datatype: 'json',
+                success: function (e) {
+                    alert(e.message);
+                    if (e.code === 1) {
+                        $('#modify-book').modal('hide');
+                    }
+                }, error: function (e) {
+                    alert('找不到服务器T_T');
+                }
+            })
+        }
+    });
+    // 删除书籍
+    $('.deleteBook').click(function () {
+        let deleteConfirm = confirm('你确定删除该书籍吗?删除后无法恢复!');
+        let id = $(this).attr('data-id');
+        if (deleteConfirm) {
+            $.ajax({
+                url: url + '?id=' + id,
+                type: 'delete',
+                datatype: 'json',
+                success: function (e) {
+                    if (e.code === 1) {
+                        alert('删除成功');
+                        // 删除行
+                        $('tr[data-id=\"'+ id + '\"]').remove();
+                    } else {
+                        alert('删除失败,请稍后重试');
+                    }
+                },
+                error: function (e) {
+                    alert('找不到服务器T_T');
+                }
+            });
+        }
+    });
+    // 上传图片按钮
+    $('.uploadImage').click(function () {
+        // 设置id
+        let id = $(this).attr('data-id');
+        $('#book-id').val(id);
+        $('#upload-image').modal('show');
+    });
+    // 上传按钮
+    $('#upload-image-btn').click(function () {
+        let formData = new FormData();
+        formData.append('id', $('#book-id').val());
+        formData.append('image',$('#image')[0].files[0]);
+        $.ajax({
+            url: 'http://localhost:8081/upload',
+            type: 'post',
+            data: formData,
+            processData: false,
+            contentType: false,
+            success: function (e) {
+                alert(e.message);
+                if (e.code == 1) {
+                    $('#upload-image').modal('hide');
+                }
+            }
+        })
     });
 </script>
 </body>

@@ -23,12 +23,13 @@ public class LoginFilter implements Filter {
         String path = req.getServletPath();
 
         //测试接口暂时放行
-        if (path.startsWith("/book")) {
+        if (path.startsWith("/order")) {
             chain.doFilter(request, response);
             return;
         }
 
-        if (path.startsWith("/login") || path.startsWith("/css") || path.startsWith("/js")) {
+        if (path.startsWith("/login") || path.startsWith("/css") || path.startsWith("/image") ||
+                path.startsWith("/js") || path.startsWith("/upload")) {
             // 放行静态资源和登录页面
             chain.doFilter(request, response);
             return;
