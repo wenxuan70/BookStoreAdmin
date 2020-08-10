@@ -11,7 +11,6 @@ import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
-import java.lang.reflect.Proxy;
 import java.util.*;
 
 @WebFilter(urlPatterns = "/*", initParams = {
@@ -26,13 +25,15 @@ public class EncodeFilter implements Filter {
     private static String newEncode;
 
     @Override
-    public void init(FilterConfig filterConfig) throws ServletException {
+    public void init(FilterConfig filterConfig)
+            throws ServletException {
         oldEncode = filterConfig.getInitParameter("oldEncode");
         newEncode = filterConfig.getInitParameter("newEncode");
     }
 
     @Override
-    public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
+    public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain)
+            throws IOException, ServletException {
 //        HttpServletRequest req = (HttpServletRequest) request;
         // 动态代理
 //        HttpServletRequest encodeReq = (HttpServletRequest) Proxy.newProxyInstance(req.getClass().getClassLoader(),
@@ -54,7 +55,8 @@ public class EncodeFilter implements Filter {
      * @return
      * @throws UnsupportedEncodingException
      */
-    private static String convertEncode(String old) throws UnsupportedEncodingException {
+    private static String convertEncode(String old)
+            throws UnsupportedEncodingException {
         if (old == null)
             return null;
         return new String(old.getBytes(oldEncode), newEncode);

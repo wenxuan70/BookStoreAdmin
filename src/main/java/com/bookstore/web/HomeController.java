@@ -10,7 +10,8 @@ import java.io.IOException;
 public class HomeController extends BasicController {
 
     @Override
-    protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+    protected void doGet(HttpServletRequest req, HttpServletResponse resp)
+            throws ServletException, IOException {
         // 跳转到index页面
         renderTemplate(req, resp, "index");
     }

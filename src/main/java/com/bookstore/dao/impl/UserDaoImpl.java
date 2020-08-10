@@ -19,12 +19,12 @@ public class UserDaoImpl implements UserDao {
 
     private static final UserDao userDao = new UserDaoImpl();
 
-    private UserDaoImpl() {}
-
     // 单例
     public static UserDao getInstance() {
         return userDao;
     }
+
+    private UserDaoImpl() {}
 
     private QueryRunner queryRunner = new QueryRunner(JDBCUtils.getDataSource());
 

@@ -20,7 +20,8 @@ public abstract class BasicController extends HttpServlet {
     protected TemplateEngine engine;
 
     @Override
-    public void init(ServletConfig config) throws ServletException {
+    public void init(ServletConfig config)
+            throws ServletException {
         ServletContext sc = config.getServletContext();
         engine = ThymeleafUtils.getTemplateEngine(sc);
 
@@ -39,9 +40,23 @@ public abstract class BasicController extends HttpServlet {
      * @param o
      * @throws IOException
      */
-    public void writeJson(HttpServletResponse resp, Object o) throws IOException {
+    public void writeJson(HttpServletResponse resp, Object o)
+            throws IOException {
         resp.setContentType("application/json");
         JSON.writeJSONString(resp.getWriter(), o);
+    }
+
+    /**
+     * 响应Json数据,并返回成功状态码
+     * @param resp
+     * @param o
+     * @throws IOException
+     */
+    public void writeOkData(HttpServletResponse resp, Object o)
+            throws IOException {
+        resp.setContentType("application/json");
+        ResponseContent rs = ResponseContent.isOk(o);
+        JSON.writeJSONString(resp.getWriter(), rs);
     }
 
     /**
@@ -50,7 +65,8 @@ public abstract class BasicController extends HttpServlet {
      * @param msg
      * @throws IOException
      */
-    public void writeErrorMsg(HttpServletResponse resp, String msg) throws IOException {
+    public void writeErrorMsg(HttpServletResponse resp, String msg)
+            throws IOException {
         resp.setContentType("application/json");
         ResponseContent rs = ResponseContent.isError(msg);
         JSON.writeJSONString(resp.getWriter(), rs);
@@ -62,7 +78,8 @@ public abstract class BasicController extends HttpServlet {
      * @param msg
      * @throws IOException
      */
-    public void writeOkMsg(HttpServletResponse resp, String msg) throws IOException {
+    public void writeOkMsg(HttpServletResponse resp, String msg)
+            throws IOException {
         resp.setContentType("application/json");
         ResponseContent rs = ResponseContent.isOk(msg);
         JSON.writeJSONString(resp.getWriter(), rs);
@@ -74,7 +91,8 @@ public abstract class BasicController extends HttpServlet {
      * @param resp
      * @param name
      */
-    protected void renderTemplate(HttpServletRequest req, HttpServletResponse resp, String name) throws IOException {
+    protected void renderTemplate(HttpServletRequest req, HttpServletResponse resp, String name)
+            throws IOException {
         WebContext webContext = new WebContext(req, resp, req.getServletContext());
         engine.process(name, webContext, resp.getWriter());
     }
@@ -86,7 +104,8 @@ public abstract class BasicController extends HttpServlet {
      * @param viewName 模板名称
      * @param vars
      */
-    protected void renderTemplate(HttpServletRequest req, HttpServletResponse resp, String viewName, Map<String, Object> vars) throws IOException {
+    protected void renderTemplate(HttpServletRequest req, HttpServletResponse resp, String viewName, Map<String, Object> vars)
+            throws IOException {
         WebContext webContext = new WebContext(req, resp, req.getServletContext());
         webContext.setVariables(vars);
         engine.process(viewName, webContext, resp.getWriter());
@@ -100,7 +119,8 @@ public abstract class BasicController extends HttpServlet {
      * @param varsName
      * @param vars
      */
-    protected void renderTemplate(HttpServletRequest req, HttpServletResponse resp, String viewName, String[] varsName, Object[] vars) throws IOException {
+    protected void renderTemplate(HttpServletRequest req, HttpServletResponse resp, String viewName, String[] varsName, Object[] vars)
+            throws IOException {
         WebContext webContext = new WebContext(req, resp, req.getServletContext());
         for (int i = 0; i < varsName.length; i++) {
             webContext.setVariable(varsName[i], vars[i]);
@@ -116,7 +136,8 @@ public abstract class BasicController extends HttpServlet {
      * @param varName
      * @param var
      */
-    protected void renderTemplate(HttpServletRequest req, HttpServletResponse resp, String viewName, String varName, Object var) throws IOException {
+    protected void renderTemplate(HttpServletRequest req, HttpServletResponse resp, String viewName, String varName, Object var)
+            throws IOException {
         WebContext webContext = new WebContext(req, resp, req.getServletContext());
         webContext.setVariable(varName, var);
         engine.process(viewName, webContext, resp.getWriter());

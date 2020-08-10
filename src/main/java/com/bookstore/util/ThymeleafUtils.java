@@ -14,4 +14,6 @@ public class ThymeleafUtils {
     public static TemplateEngine getTemplateEngine(ServletContext context) {
         return (TemplateEngine) context.getAttribute(THYMELEAF);
     }
+
+    private ThymeleafUtils() {}
 }

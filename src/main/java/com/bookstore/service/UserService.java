@@ -10,14 +10,15 @@ import java.util.Date;
 
 public class UserService {
 
-    private static final UserDao userDao = UserDaoImpl.getInstance();
     private static final UserService userService = new UserService();
-
-    private UserService() {}
 
     public static UserService getInstance() {
         return userService;
     }
+
+    private UserService() {}
+
+    private UserDao userDao = UserDaoImpl.getInstance();
 
     /*---查询业务---*/
 

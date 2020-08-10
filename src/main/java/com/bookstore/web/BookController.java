@@ -21,7 +21,8 @@ public class BookController extends BasicController {
 
     private static final String TITLE_VALIDATION = "^([\\u4E00-\\u9FA5]|\\w){1,15}$";
     private static final String PRICE_VALIDATION = "^(([1-9][0-9]*)|0)(\\.[0-9]+)?$";
-    private static final String PUBLISH_DATE_VALIDATION = "^(19|20)[0-9]{2}-((0[1-9])|(1[0-2]))-((0[1-9])|([1-2][0-9])|(3[0-2]))$";
+    private static final String PUBLISH_DATE_VALIDATION =
+            "^(19|20)[0-9]{2}-((0[1-9])|(1[0-2]))-((0[1-9])|([1-2][0-9])|(3[0-2]))$";
 
     private BookService bookService = BookService.getInstance();
 
@@ -33,7 +34,8 @@ public class BookController extends BasicController {
      * @throws IOException
      */
     @Override
-    protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+    protected void doGet(HttpServletRequest req, HttpServletResponse resp)
+            throws ServletException, IOException {
         String indexStr = req.getParameter("index"),
                 sizeStr = req.getParameter("size"),
                 query = req.getParameter("q");
@@ -67,7 +69,8 @@ public class BookController extends BasicController {
      * @throws IOException
      */
     @Override
-    protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+    protected void doPost(HttpServletRequest req, HttpServletResponse resp)
+            throws ServletException, IOException {
         String title = req.getParameter("title"),
                 desc = req.getParameter("desc"),
                 author = req.getParameter("author"),
@@ -107,7 +110,8 @@ public class BookController extends BasicController {
      * @throws IOException
      */
     @Override
-    protected void doPut(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+    protected void doPut(HttpServletRequest req, HttpServletResponse resp)
+            throws ServletException, IOException {
         String  idStr = req.getParameter("id"),
                 desc = req.getParameter("desc"),
                 sort = req.getParameter("sort"),
@@ -153,7 +157,8 @@ public class BookController extends BasicController {
      * @throws IOException
      */
     @Override
-    protected void doDelete(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+    protected void doDelete(HttpServletRequest req, HttpServletResponse resp)
+            throws ServletException, IOException {
         String  idStr = req.getParameter("id");
         if (StringUtils.isEmpty(idStr)) {
             writeErrorMsg(resp, "书籍id不能为空");

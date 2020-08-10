@@ -20,8 +20,6 @@ import java.util.List;
 
 public class BookDaoImpl implements BookDao {
 
-    private BookDaoImpl() {}
-
     private static final Logger log = LoggerFactory.getLogger(BookDaoImpl.class);
 
     private static final BookDao bookDao = new BookDaoImpl();
@@ -29,6 +27,8 @@ public class BookDaoImpl implements BookDao {
     public static BookDao getInstance() {
         return bookDao;
     }
+
+    private BookDaoImpl() {}
 
     private QueryRunner queryRunner = new QueryRunner(JDBCUtils.getDataSource());
 

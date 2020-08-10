@@ -54,4 +54,6 @@ public class JDBCUtils {
             e.printStackTrace();
         }
     }
+
+    private JDBCUtils() {}
 }

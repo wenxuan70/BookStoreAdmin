@@ -38,6 +38,7 @@
     <div class="row" style="padding: 5px;border-bottom: 1px solid;">
         <a href="#" class="btn btn-primary" style="margin-right: 15px;" data-toggle="modal"
            data-target="#add-book">添加书籍</a>
+        <a href="#" id="buy-book" class="btn btn-info" style="margin-right: 15px;">购买选中书籍</a>
         <div class="form-inline" style="display: inline;">
             <div class="form-group">
                 <input id="search-book-title" type="text" class="form-control" placeholder="请输入要搜索的书籍名称" required="">
@@ -48,7 +49,7 @@
     <div class="row">
         <table class="table table-bordered table-hover">
             <thead>
-            <th><input type="checkbox"></th>
+            <th><input id="select-all-book" type="checkbox"></th>
             <th>id</th>
             <th style="width: 100px">书籍名称</th>
             <th>书籍封面</th>
@@ -62,7 +63,7 @@
             </thead>
             <tbody>
             <tr th:if="${page!=null}" th:each="book : ${page.data}" th:attr="data-id=${book.id}">
-                <td><input type="checkbox"></td>
+                <td><input class="select-book" type="checkbox" th:attr="data-id=${book.id}"></td>
                 <td th:text="${book.id}"></td>
                 <td class="title-limit" th:text="${book.title}"></td>
                 <td>
@@ -175,6 +176,7 @@
             </div>
         </div>
     </div>
+
 </div>
 
 <!--修改书籍信息-->
@@ -211,7 +213,7 @@
                     <div class="form-group">
                         <label for="modify-book-sort">分类</label>
                         <select id="modify-book-sort" class="form-control">
-                            <option selected disabled>请选择</option>
+                            <option selected disabled value="on">请选择</option>
                             <option value="小说">小说</option>
                             <option value="文学">文学</option>
                             <option value="经济">经济</option>
@@ -230,7 +232,7 @@
                                   required></textarea>
                     </div>
                     <div class="form-group">
-                        <label for="modify-book-price">定价</label>
+                        <label for="modify-book-price">定价(元)</label>
                         <input type="number" class="form-control" id="modify-book-price" placeholder="请输入书籍定价" min="1"
                                required>
                     </div>
@@ -267,171 +269,27 @@
     </div>
 </div>
 
+
+<!--购买书籍的支付方式-->
+<div id="pay-method" class="modal fade" tabindex="-1" role="dialog">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title">请选择支付方式</h4>
+            </div>
+            <div class="modal-body">
+                <button id="pay-method-one" class="btn btn-default" type="button"
+                        data-loading-text="订单生成中...">网上支付</button>
+                <button id="pay-method-two" class="btn btn-default" type="button"
+                        data-loading-text="订单生成中...">货到付款</button>
+            </div>
+        </div>
+    </div>
+</div>
+
 <script th:src="@{/js/jquery.js}"></script>
 <script th:src="@{/js/bootstrap.min.js}"></script>
-<script>
-    const url = 'http://localhost:8081/book';
-    const DateRegexp = /^(19|20)[0-9]{2}-((0[1-9])|(1[0-2]))-((0[1-9])|([1-2][0-9])|(3[0-2]))$/;
-    $('#search-book-btn').click(function () {
-        let title = $('#search-book-title').val();
-        if (!/([\u4E00-\u9FA5]|\w)+/.test(title)) {
-            alert('搜索内容不能为空');
-        } else {
-            let query = '?q=' + title;
-            $(location).attr('href', url + query);
-        }
-    });
-    // 添加书籍模态框关闭前
-    $('#add-book').on('hidden.bs.modal', function (e) {
-        $('#add-book-title').val('');
-        $('#add-book-desc').val('');
-        $('#add-book-author').val('');
-        $('#add-book-sort').val('no');
-        $('#add-book-price').val('');
-        $('#add-book-publishDate').val('');
-        $('#add-book-publisher').val('');
-    });
-    // 修改书籍前获取信息
-    $('#modify-book').on('show.bs.modal', function (e) {
-        let id = e.relatedTarget.dataset['id'];
-        let children = $('tr[data-id="' + id + '"]').children();
-        $('#modify-book-id').val($(children[1]).html());
-        $('#modify-book-title').val($(children[2]).html());
-        $('#modify-book-desc').val($(children[3]).html());
-        $('#modify-book-author').val($(children[4]).html());
-        $('#modify-book-publisher').val($(children[5]).html());
-        $('#modify-book-publishDate').val($(children[6]).html());
-        $('#modify-book-price').val($(children[7]).html());
-        $('#modify-book-sort').val($(children[8]).html());
-    });
-    // 添加书籍
-    $('#add-book-btn').click(function () {
-        let title = $('#add-book-title').val(),
-            desc = $('#add-book-desc').val(),
-            author = $('#add-book-author').val(),
-            sort = $('#add-book-sort').val(),
-            price = $('#add-book-price').val(),
-            publishDate = $('#add-book-publishDate').val(),
-            publisher = $('#add-book-publisher').val();
-        if (!/^([\u4E00-\u9FA5]|\w){1,15}$/.test(title)) {
-            alert('书籍名称格式必须为:中文,字母,数字和下划线组成,长度为1-15个字符');
-        } else if (author === null || author.length === 0) {
-            alert('作者不能为空');
-        } else if (sort === null || sort.length === 0 || sort === 'no') {
-            alert('分类不能为空');
-        } else if (desc === null || desc.length === 0) {
-            alert('描述不能为空');
-        } else if (publisher === null || publisher.length === 0) {
-            alert('出版社不能为空');
-        } else if (publishDate === null || publishDate.length === 0 || !DateRegexp.test(publishDate)) {
-            alert('出版日期格式不正确');
-        } else if (price === null || price.length === 0 || !/[1-9][0-9]*/.test(price)) {
-            alert('价格格式不正确');
-        } else {
-            $.ajax({
-                url: url,
-                type: 'post',
-                data: {
-                    title: title,
-                    author: author,
-                    sort: sort,
-                    desc: desc,
-                    publishDate: publishDate,
-                    publisher: publisher,
-                    price: price
-                },
-                datatype: 'json',
-                success: function (e) {
-                    alert(e.message);
-                    if (e.code === 1) {
-                        $('#add-book').modal('hide');
-                    }
-                },
-                error: function (e) {
-                    alert('找不到服务器T_T');
-                }
-            })
-        }
-    });
-    // 修改书籍
-    $('#modify-book-btn').click(function () {
-        let price = $('#modify-book-price').val(),
-            sort = $('#modify-book-sort').val(),
-            desc = $('#modify-book-desc').val(),
-            id = $('#modify-book-id').val();
-        if (sort === null || sort.length === 0 || sort === 'no') {
-            alert('分类不能为空');
-        } else if (desc === null || desc.length === 0) {
-            alert('描述不能为空');
-        } else if (price === null || price.length === 0 || !/[1-9][0-9]*/.test(price)) {
-            alert('价格格式不正确');
-        } else {
-            let data = '?id='+id+'&price='+price+'&sort='+sort+'&desc='+desc;
-            $.ajax({
-                url: url + data,
-                type: 'put',
-                datatype: 'json',
-                success: function (e) {
-                    alert(e.message);
-                    if (e.code === 1) {
-                        $('#modify-book').modal('hide');
-                    }
-                }, error: function (e) {
-                    alert('找不到服务器T_T');
-                }
-            })
-        }
-    });
-    // 删除书籍
-    $('.deleteBook').click(function () {
-        let deleteConfirm = confirm('你确定删除该书籍吗?删除后无法恢复!');
-        let id = $(this).attr('data-id');
-        if (deleteConfirm) {
-            $.ajax({
-                url: url + '?id=' + id,
-                type: 'delete',
-                datatype: 'json',
-                success: function (e) {
-                    if (e.code === 1) {
-                        alert('删除成功');
-                        // 删除行
-                        $('tr[data-id=\"'+ id + '\"]').remove();
-                    } else {
-                        alert('删除失败,请稍后重试');
-                    }
-                },
-                error: function (e) {
-                    alert('找不到服务器T_T');
-                }
-            });
-        }
-    });
-    // 上传图片按钮
-    $('.uploadImage').click(function () {
-        // 设置id
-        let id = $(this).attr('data-id');
-        $('#book-id').val(id);
-        $('#upload-image').modal('show');
-    });
-    // 上传按钮
-    $('#upload-image-btn').click(function () {
-        let formData = new FormData();
-        formData.append('id', $('#book-id').val());
-        formData.append('image',$('#image')[0].files[0]);
-        $.ajax({
-            url: 'http://localhost:8081/upload',
-            type: 'post',
-            data: formData,
-            processData: false,
-            contentType: false,
-            success: function (e) {
-                alert(e.message);
-                if (e.code == 1) {
-                    $('#upload-image').modal('hide');
-                }
-            }
-        })
-    });
-</script>
+<script th:src="@{/js/book.js}"></script>
 </body>
 </html>

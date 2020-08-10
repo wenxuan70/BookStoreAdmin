@@ -13,15 +13,15 @@ import java.util.List;
 
 public class BookService {
 
-    private static final BookDao bookDao = BookDaoImpl.getInstance();
-
     private static final BookService bookService = new BookService();
-
-    private BookService() {}
 
     public static BookService getInstance() {
         return bookService;
     }
+
+    private BookService() {}
+
+    private BookDao bookDao = BookDaoImpl.getInstance();
 
     /*---查询业务---*/
 
@@ -98,6 +98,19 @@ public class BookService {
      */
     public String getUrl(long id) {
         return bookDao.getUrl(id);
+    }
+
+    /**
+     * 验证是否有该书籍
+     * @param bookIds
+     * @return
+     */
+    public boolean validBookId(Long[] bookIds) {
+        for (int i = 0; i < bookIds.length; i++) {
+            if (!hasId(bookIds[i]))
+                return false;
+        }
+        return true;
     }
 
     /*---更新业务---*/

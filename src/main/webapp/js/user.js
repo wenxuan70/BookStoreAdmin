@@ -30,7 +30,7 @@ $('#add-user-btn').click(function () {
 			},
 			dataType: 'json',
 			success: function (e) {
-				alert(e.message);
+				alert(e.data);
 			},
 			error: function (e) {
 				alert('找不到服务器T_T');
