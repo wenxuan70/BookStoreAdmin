@@ -60,13 +60,14 @@ public class WebConfig implements ServletContextListener {
                 new ServletContextTemplateResolver(context);
 
         templateResolver.setTemplateMode(TemplateMode.HTML);
+        templateResolver.setCharacterEncoding("UTF-8");
         // 映射
         templateResolver.setPrefix("/WEB-INF/template/");
         templateResolver.setSuffix(".html");
         // 缓存时间
         templateResolver.setCacheTTLMs(Long.valueOf(3600000L));
         // 是否缓存
-        templateResolver.setCacheable(false);
+        templateResolver.setCacheable(true);
         return templateResolver;
     }
 }

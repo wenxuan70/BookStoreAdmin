@@ -13,6 +13,32 @@
 1. BootStrap
 2. JQuery
 
+# 使用说明
+
+1. 修改jdbc.properties文件的username和passwowrd为你的数据库用户名和密码
+2. 进入管理页需要登录
+    账号:test
+    密码:123456
+
+# 表结构
+
+> sql文件放在src/resources/db目录下
+
+| 表名       | 作用               |
+| ---------- | ------------------ |
+| user       | 用户信息           |
+| sort       | 书籍分类           |
+| book       | 书籍信息           |
+| book_img   | 书籍对应封面的url  |
+| order      | 订单信息           |
+| order_book | 订单中所包含的书籍 |
+
+# 页面展示
+
+![用户管理页](https://s1.ax1x.com/2020/08/13/axL0tH.png) 
+![书籍管理页](https://s1.ax1x.com/2020/08/13/axLwAe.png)
+![修改订单](https://s1.ax1x.com/2020/08/13/axLa7D.png)
+
 # 更新记录
 ## 2020.8.4开始
 1. 添加首页,用户页

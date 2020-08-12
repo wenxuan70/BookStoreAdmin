@@ -262,6 +262,9 @@
                         <input type="file" id="image">
                         <p class="help-block">只允许上传 jpg, jpeg, svg, png格式,且大小不超过5MB的图片</p>
                     </div>
+                    <div id="preview"  style="padding: 15px;display: none;">
+                        <img class="img-responsive img-rounded" height="140" width="140">
+                    </div>
                     <button id="upload-image-btn" type="button" class="btn btn-primary">上传</button>
                 </form>
             </div>
@@ -290,6 +293,6 @@
 
 <script th:src="@{/js/jquery.js}"></script>
 <script th:src="@{/js/bootstrap.min.js}"></script>
-<script th:src="@{/js/book.js}"></script>
+<script th:src="@{/js/book.js}" charset="utf-8"></script>
 </body>
 </html>

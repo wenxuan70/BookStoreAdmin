@@ -24,20 +24,51 @@
                    title="创建日期" disabled>
         </div>
         <div class="form-group">
-            <label for="info-password">密码(已加密)</label>
-            <input type="text" th:value="${user.password}" class="form-control" id="info-password"
-                   title="加密后的密码" disabled>
+            <label for="info-password">密码</label>
+            <input type="password" class="form-control" id="info-password"
+                   title="加密后的密码" name="password">
         </div>
         <div class="form-group">
             <label for="info-email">邮箱</label>
-            <input type="email" th:value="${user.email}" class="form-control" id="info-email" title="邮箱" disabled>
+            <input type="email" th:value="${user.email}" class="form-control" id="info-email"
+                   title="邮箱" name="email">
         </div>
-        <button id="modify-info-password" type="submit" class="btn btn-default">修改密码</button>
-        <button id="modify-info-email" type="submit" class="btn btn-default">修改邮箱</button>
+        <button id="modify-info" type="button" class="btn btn-default">修改</button>
     </form>
 </div>
 
 <script th:src="@{/js/jquery.js}"></script>
 <script th:src="@{/js/bootstrap.min.js}"></script>
+<script charset="utf-8">
+    $('#modify-info').click(function () {
+        let email =$('#info-email').val(), password = $('#info-password').val();
+        if (!/^\w{6,16}$/.test(password)) {
+            alert('密码格式:由字母,数字,下划线组成;长度为6-16个字符');
+        } else if (!/^\w+@\w+\.\w+$/.test(email)) {
+            alert('邮箱格式不正确');
+        } else {
+            $.ajax({
+                url: '/info',
+                type: 'post',
+                data: {
+                  password: password,
+                  email: email
+                },
+                datatype: 'json',
+                success: function (e) {
+                    alert(e.data);
+                    if (e.code === 1) {
+                        parent.location.reload();
+                    } else {
+                        window.location.reload();
+                    }
+                },
+                error: function () {
+                    alert('找不到服务器T_T');
+                }
+            })
+        }
+    });
+</script>
 </body>
 </html>
