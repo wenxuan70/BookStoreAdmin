@@ -22,7 +22,7 @@
 
 # 表结构
 
-> sql文件放在src/resources/db目录下
+> sql文件放在src/main/resources/db目录下
 
 | 表名       | 作用               |
 | ---------- | ------------------ |
