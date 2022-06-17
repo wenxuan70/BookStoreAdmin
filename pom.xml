@@ -22,7 +22,7 @@
     <thymeleaf-version>3.0.11.RELEASE</thymeleaf-version>
     <servlet-version>3.0.1</servlet-version>
     <dbutils-version>1.7</dbutils-version>
-    <fastjson-version>1.2.73</fastjson-version>
+    <fastjson-version>1.2.83</fastjson-version>
     <druid-version>1.1.23</druid-version>
     <slf4j-version>2.0.0-alpha1</slf4j-version>
   </properties>
